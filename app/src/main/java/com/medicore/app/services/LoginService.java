@@ -20,6 +20,9 @@ public class LoginService {
         if(user.getRole().equals(UserSession.getRole())){
             return UserSession.getRole();
         }
+        else if(user.getRole().equals("ADMIN")){
+            return UserSession.getRole();
+        }
         else {
             throw new IllegalStateException("El rol seleccionado no coincide con el rol del usuario");
         }
