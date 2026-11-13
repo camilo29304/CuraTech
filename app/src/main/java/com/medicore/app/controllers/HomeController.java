@@ -23,7 +23,16 @@ public class HomeController {
 
     @GetMapping("/login")
     public String showLoginView(Model model) {
-        model.addAttribute("role", UserSession.getRole());
+        String document = "";
+        String password = "";
+        try {
+            document = loginService.getEntryDocument();  
+            password = loginService.getEntryPassword();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        model.addAttribute("document", document);
+        model.addAttribute("password", password);
         return "public/login"; // Busca home.html en templates/
     }
 
