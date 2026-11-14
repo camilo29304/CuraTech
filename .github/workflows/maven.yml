@@ -18,7 +18,9 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+          cache-dependency-path: app/pom.xml
 
 
       - name: Compile and run tests
+        working-directory: ./app
         run: mvn -B clean test
