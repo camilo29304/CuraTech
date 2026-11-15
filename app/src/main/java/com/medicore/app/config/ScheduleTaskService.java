@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.DayOfWeek;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.context.event.EventListener;
 
 import com.medicore.app.models.Appointment;
 import com.medicore.app.models.ApptmType;
@@ -28,6 +28,8 @@ import jakarta.transaction.Transactional;
 
 @Component
 public class ScheduleTaskService {
+
+    private static final ZoneId BOGOTA_ZONE = ZoneId.of("America/Bogota");
 
     private final AppointmentRepository appointmentRepo;
     private final EmployeeRepository employeeRepo;
@@ -49,27 +51,30 @@ public class ScheduleTaskService {
         this.appointmentService = appointmentService;
     }
 
-    @Scheduled(cron = "0 59 23 * * SUN", zone = "America/Bogota")
+    //@Scheduled(cron = "0 59 23 * * SUN", zone = "America/Bogota")
     @Transactional
     public void generateWeeklyAppointments() {
-        generateWeekIfMissing(LocalDate.now().plusWeeks(1));
+        generateWeekIfMissing(LocalDate.now(BOGOTA_ZONE).plusWeeks(1));
     }
 
-    @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void generateCurrentWeekAppointments() {
-        generateWeekIfMissing(LocalDate.now());
+        generateWeekIfMissing(LocalDate.now(BOGOTA_ZONE));
     }
 
     private void generateWeekIfMissing(LocalDate referenceDate) {
         LocalDate monday = referenceDate.with(DayOfWeek.MONDAY);
         LocalDate sunday = monday.plusDays(6);
+        OffsetDateTime weekStart = monday.atStartOfDay().atOffset(ZoneOffset.ofHours(-5));
+        OffsetDateTime nextWeekStart = monday.plusWeeks(1).atStartOfDay().atOffset(ZoneOffset.ofHours(-5));
 
-        if (scheduleRepo.existsByDateBetween(monday, sunday)) {
+        if (appointmentRepo.existsByDateTimeGreaterThanEqualAndDateTimeLessThan(weekStart, nextWeekStart)) {
             return;
         }
 
-        createSchedule(monday);
+        if (!scheduleRepo.existsByDateBetween(monday, sunday)) {
+            createSchedule(monday);
+        }
         createAppointments(monday, sunday);
     }
 

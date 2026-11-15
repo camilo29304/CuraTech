@@ -46,8 +46,14 @@ public class PatientController {
 
 
     @GetMapping
-    public String showPatientMenu() {
-        return "patient/patient-menu"; // Busca home.html en templates/
+    public String showPatientMenu(Model model) {
+        Patient patient = patientService.getPatientByDocumentNumber(UserSession.getDocumentNumber());
+        Appointment apptm = appointmentService.getNextAppointment(patient, "PACIENTE");
+        List<Prescription> prescriptions = prescriptionService.getActivePrescriptionsByPatient(UserSession.getDocumentNumber());
+        model.addAttribute("patient", patient);
+        model.addAttribute("appointment", apptm);
+        model.addAttribute("prescriptions", prescriptions);
+        return "patient/patient-menu";
     }
     @GetMapping("/update-personal-data-view")
     public String showUpdatePersonalDataView(Model model) {

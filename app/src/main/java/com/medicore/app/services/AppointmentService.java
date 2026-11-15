@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.medicore.app.models.Appointment;
 import com.medicore.app.models.ApptmType;
 import com.medicore.app.models.Patient;
+import com.medicore.app.models.Person;
 import com.medicore.app.repository.AppointmentRepository;
 import com.medicore.app.repository.ApptmTypeRepository;
 import com.medicore.app.repository.PatientRepository;
@@ -105,6 +106,16 @@ public class AppointmentService {
         toCancel.setPatient(null);
         repo.save(toCancel);
         return true;
+    }
+
+    public Appointment getNextAppointment(Person person, String userType){
+        if (userType.equals("MEDICO")) {
+            return repo.findNextApptmByEmployee(person.getDocumentNumber());
+        }
+        else if(userType.equals("PACIENTE")){
+            return repo.findNextApptmByPatient(person.getDocumentNumber());
+        }
+        else{throw new IllegalArgumentException("Rol de usuario inválido");}
     }
 
     public List<Appointment> getAvailableAppointments() {

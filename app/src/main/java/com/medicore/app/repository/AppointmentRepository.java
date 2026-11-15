@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import org.antlr.v4.runtime.atn.SemanticContext.AND;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,7 +32,22 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
         @Param("employeeId") int employeeId,
         @Param("date") LocalDate date);
 
+    @Query("SELECT a FROM Appointment a " +
+            "JOIN a.employee e " +
+            "WHERE e.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP " +
+            "ORDER BY a.dateTime ASC "+
+            "LIMIT 1")
+    Appointment findNextApptmByEmployee( @Param("documentNumber") String documentNumber);
+
+    @Query("SELECT a FROM Appointment a " +
+            "JOIN a.patient p " +
+            "WHERE p.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP " +
+            "ORDER BY a.dateTime ASC "+
+            "LIMIT 1")
+    Appointment findNextApptmByPatient( @Param("documentNumber") String documentNumber);
+
     Appointment findByEmployeeIdAndDateTime(int employeeId, OffsetDateTime dateTime);
     List<Appointment> findByPatientDocumentNumberAndIsAvailable(String documentNumber, boolean isAvailable);
+    boolean existsByDateTimeGreaterThanEqualAndDateTimeLessThan(OffsetDateTime weekStart, OffsetDateTime nextWeekStart);
     
 }

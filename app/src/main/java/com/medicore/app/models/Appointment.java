@@ -60,5 +60,10 @@ public class Appointment {
         return dateTime.format(formatter);
     }
 
+    public String getFormattedDate() {
+        if (dateTime == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dateTime.format(formatter);
+    }
     
 }
