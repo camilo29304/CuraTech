@@ -33,14 +33,14 @@
             <div id="content" class="p-4">
 
                 <div class="container-fluid">
-                    <form th:object="${patient}">
+                   
                         <!-- Encabezado con Bienvenida y Badge de Afiliación -->
-                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                            <h1 class="h3 mb-0 text-gray-800">
-                                Bienvenido, <span th:text="${patient.name}"></span>
-                            </h1>                        
-                        </div>
-                    </form>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            Bienvenido, <span th:text="${patient.name}"></span>
+                        </h1>                        
+                    </div>
+                 
                         <!-- Fila de Resumen: Próxima Cita e Información Clave -->
                     <div class="row">
 

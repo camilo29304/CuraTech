@@ -103,41 +103,13 @@
 
             <!-- Main Content -->
             <div id="content" class="bg-light p-4">
-
                 <!-- Header de bienvenida -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
                         Bienvenido, <span class="text-purple">Admin</span>
                     </h1>
-                    <span class="badge bg-white text-purple shadow-sm p-2 border font-weight-bold">
-                        <i class="bi bi-clock-history mr-1"></i> Resumen General
-                    </span>
                 </div>
 
-                <!-- Banner de Acciones Rápidas -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card shadow border-0 bg-purple-gradient text-white p-3">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                <div>
-                                    <h5 class="font-weight-bold mb-1">Acciones Rápidas</h5>
-                                    <p class="small mb-0 text-white-50">Accede directamente a las tareas frecuentes del sistema</p>
-                                </div>
-                                <div class="mt-2 mt-sm-0">
-                                    <a th:href="@{/admin/empleados/nuevo}" class="btn btn-light text-purple font-weight-bold mr-2 mb-1">
-                                        <i class="bi bi-person-plus-fill mr-1"></i> Nuevo Empleado
-                                    </a>
-                                    <a th:href="@{/admin/pacientes/nuevo}" class="btn btn-outline-light font-weight-bold mr-2 mb-1">
-                                        <i class="bi bi-person-heart mr-1"></i> Registrar Paciente
-                                    </a>
-                                    <a th:href="@{/admin/citas/nueva}" class="btn btn-outline-light font-weight-bold mb-1">
-                                        <i class="bi bi-calendar-plus mr-1"></i> Agendar Cita
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Grilla de Tarjetas de Métricas -->
                 <div class="row">
@@ -151,7 +123,7 @@
                                         <div class="text-xs font-weight-bold text-purple text-uppercase mb-1">
                                             Doctores Registrados
                                         </div>
-                                        <div class="h2 mb-0 font-weight-bold text-gray-800">19</div>
+                                        <div class="h2 mb-0 font-weight-bold text-gray-800" th:text="${totalEmployees}">19</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box">
@@ -170,9 +142,9 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Pacientes Atendidos
+                                            Pacientes Registrados
                                         </div>
-                                        <div class="h2 mb-0 font-weight-bold text-gray-800">40</div>
+                                        <div class="h2 mb-0 font-weight-bold text-gray-800" th:text="${totalEmployees}">40</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box" style="background: rgba(78, 115, 223, 0.1); color: var(--accent-blue);">
@@ -193,7 +165,7 @@
                                         <div class="text-xs font-weight-bold text-purple text-uppercase mb-1">
                                             Citas Semanales
                                         </div>
-                                        <div class="h2 mb-0 font-weight-bold text-gray-800">75</div>
+                                        <div class="h2 mb-0 font-weight-bold text-gray-800" th:text="${totalAppointments}">75</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box">
@@ -211,9 +183,8 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
                         <h6 class="m-0 font-weight-bold text-purple">
-                            <i class="bi bi-calendar-event mr-2"></i>Próximas Citas del Día
+                            <i class="bi bi-calendar-event mr-2"></i>Próximas Citas
                         </h6>
-                        <a th:href="@{/admin/citas}" class="btn btn-sm btn-outline-purple font-weight-bold">Ver Todas</a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -228,27 +199,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="font-weight-bold">08:00 AM</td>
-                                        <td>Carlos Gómez</td>
-                                        <td>Dr. Roberto Silva</td>
-                                        <td>Cardiología</td>
-                                        <td><span class="badge badge-success">Confirmada</span></td>
+                                    <tr th:each="appointment : ${appointments}">
+                                        <td class="font-weight-bold" th:text="${appointment.getFormattedDate}">Fecha</td>
+                                        <td class="font-weight-bold" th:text="${appointment.getFormattedTime}">08:00 AM</td>
+                                        <td th:text="${appointment.patient.name}">Carlos Gómez</td>
+                                        <td th:text="${appointment.employee.name}">Dr. Roberto Silva</td>
+                                        <td th:text="${appointment.apptmType.type}">Cardiología</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-weight-bold">08:30 AM</td>
-                                        <td>Ana Martínez</td>
-                                        <td>Dra. Elena Ramos</td>
-                                        <td>Pediatría</td>
-                                        <td><span class="badge badge-warning text-white">Pendiente</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-weight-bold">09:15 AM</td>
-                                        <td>Luis Hernández</td>
-                                        <td>Dr. Fernando Torres</td>
-                                        <td>Medicina General</td>
-                                        <td><span class="badge badge-success">Confirmada</span></td>
-                                    </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>
