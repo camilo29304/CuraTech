@@ -12,4 +12,5 @@ import com.medicore.app.models.Schedule;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer>{
 	boolean existsByDateBetween(LocalDate start, LocalDate end);
 	List<Schedule> findByDateBetween(LocalDate start, LocalDate end);
+	List<Schedule> findByEmployeeDocumentNumber(String documentNumber);
 }

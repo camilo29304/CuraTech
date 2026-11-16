@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 
 import com.medicore.app.models.Employee;
 import com.medicore.app.models.Role;
+import com.medicore.app.models.Schedule;
 import com.medicore.app.repository.EmployeeRepository;
 import com.medicore.app.repository.RoleRepository;
+import com.medicore.app.repository.ScheduleRepository;
 
 @Service
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+    @Autowired
     private RoleRepository roleRepository;
 
     public List<Role> getRoles() {
@@ -21,6 +26,10 @@ public class EmployeeService {
     }
     public List<Employee> getAll() {
         return employeeRepository.findAll();
+    }
+
+    public List<Schedule> getSchedulesByEmployeeDocumentNumber(String documentNumber) {
+        return scheduleRepository.findByEmployeeDocumentNumber(documentNumber);
     }
 
     public boolean deleteEmployeeByDocumentNumber(String documentNumber) {
