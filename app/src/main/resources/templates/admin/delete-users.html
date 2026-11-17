@@ -84,29 +84,28 @@
                 <!-- Buscador de usuarios a eliminar/inactivar -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form class="row align-items-end">
+                        <form th:action="@{/admin/delete-users}" method="get" class="row align-items-end">
                             <div class="col-md-5 mb-3 mb-md-0">
                                 <label class="form-label text-gray-700 font-weight-bold small">Usuario o Documento</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-white"><i class="bi bi-search text-purple"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Buscar por correo, nombre o documento...">
+                                    <input type="text" name="query" th:value="${query}" class="form-control" placeholder="Buscar por correo o documento...">
                                 </div>
                             </div>
 
                             <div class="col-md-4 mb-3 mb-md-0">
                                 <label class="form-label text-gray-700 font-weight-bold small">Rol</label>
-                                <select class="form-control">
+                                <select class="form-control" name="role">
                                     <option value="">Todos los roles</option>
-                                    <option>MÉDICO</option>
-                                    <option>RECEPCIÓN</option>
-                                    <option>PACIENTE</option>
+                                    <option value="MEDICO" th:selected="${selectedRole == 'MEDICO'}">MÉDICO</option>
+                                    <option value="PACIENTE" th:selected="${selectedRole == 'PACIENTE'}">PACIENTE</option>
                                 </select>
                             </div>
 
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-purple btn-block font-weight-bold">
+                                <button type="submit" class="btn btn-purple btn-block font-weight-bold">
                                     <i class="bi bi-filter mr-1"></i> Buscar Usuario
                                 </button>
                             </div>
@@ -135,59 +134,39 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:if="${users.isEmpty()}">
+                                        <td colspan="5" class="text-center text-gray-500 py-4">No se encontraron usuarios</td>
+                                    </tr>
+                                    <tr th:each="user : ${users}">
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar-initial-danger mr-3">JP</div>
+                                                <div class="avatar-initial-danger mr-3" th:text="${#strings.substring(user.documentNumber,0,1)}">U</div>
                                                 <div>
-                                                    <div class="font-weight-bold text-gray-800">Juan Pérez</div>
-                                                    <div class="small text-gray-500">juan.perez@CuraTech.com</div>
+                                                    <div class="font-weight-bold text-gray-800" th:text="${user.documentNumber}">Usuario</div>
+                                                    <div class="small text-gray-500" th:text="${user.role}">Rol</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="align-middle">CC 5544332211</td>
+                                        <td class="align-middle" th:text="${user.documentNumber}">Documento</td>
                                         <td class="align-middle">
-                                            <span class="badge badge-light text-gray-700 border p-2">RECEPCIÓN</span>
+                                            <span class="badge badge-light text-gray-700 border p-2" th:text="${user.role}">Rol</span>
                                         </td>
                                         <td class="align-middle">
                                             <span class="badge badge-success">Activo</span>
                                         </td>
                                         <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-sm btn-outline-warning mr-1 font-weight-bold" title="Inactivar cuenta">
+                                            <form th:action="@{/admin/usuarios/{documentNumber}/inactivar(documentNumber=${user.documentNumber})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning mr-1 font-weight-bold" title="Inactivar cuenta">
                                                 <i class="bi bi-slash-circle mr-1"></i> Inactivar
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" data-toggle="modal" data-target="#deleteModal">
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" data-toggle="modal" data-target="#deleteModal"
+                                                    th:attr="data-document=${user.documentNumber}" onclick="setDeleteDocument(this)">
                                                 <i class="bi bi-trash mr-1"></i> Eliminar
                                             </button>
                                         </td>
                                     </tr>
 
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-initial-danger mr-3">MC</div>
-                                                <div>
-                                                    <div class="font-weight-bold text-gray-800">Maria Castro</div>
-                                                    <div class="small text-gray-500">maria.castro@CuraTech.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">CC 1098765432</td>
-                                        <td class="align-middle">
-                                            <span class="badge badge-light text-gray-700 border p-2">PACIENTE</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge badge-secondary">Inactivo</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-sm btn-outline-success mr-1 font-weight-bold" title="Reactivar cuenta">
-                                                <i class="bi bi-check-circle mr-1"></i> Activar
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" data-toggle="modal" data-target="#deleteModal">
-                                                <i class="bi bi-trash mr-1"></i> Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -230,7 +209,7 @@
                 <div class="modal-footer bg-light border-0 justify-content-center">
                     <button type="button" class="btn btn-light border font-weight-bold px-4" data-dismiss="modal">Cancelar</button>
                     <form th:action="@{/admin/usuarios/eliminar}" method="post">
-                        <input type="hidden" name="usuarioId" value="1">
+                        <input type="hidden" id="deleteDocument" name="usuarioId">
                         <button type="submit" class="btn btn-danger font-weight-bold px-4">
                             <i class="bi bi-trash-fill mr-1"></i> Eliminar Definitivamente
                         </button>
@@ -240,5 +219,10 @@
         </div>
     </div>
 
+    <script>
+        function setDeleteDocument(button) {
+            document.getElementById('deleteDocument').value = button.getAttribute('data-document');
+        }
+    </script>
 </body>
 </html>

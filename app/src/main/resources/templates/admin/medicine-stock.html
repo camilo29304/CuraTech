@@ -90,7 +90,7 @@
                         <i class="bi bi-capsule text-purple mr-2"></i>Inventario de Medicamentos
                     </h1>
                     <div>
-                        <button type="button" class="btn btn-purple font-weight-bold shadow-sm">
+                        <button type="button" class="btn btn-purple font-weight-bold shadow-sm" data-toggle="modal" data-target="#registerMedicineModal">
                             <i class="bi bi-plus-circle-fill mr-1"></i> Registrar Medicamento
                         </button>
                     </div>
@@ -106,7 +106,7 @@
                                         <div class="text-xs font-weight-bold text-purple text-uppercase mb-1">
                                             Total Lotes Activos
                                         </div>
-                                        <div class="h4 mb-0 font-weight-bold text-gray-800">128</div>
+                                        <div class="h4 mb-0 font-weight-bold text-gray-800" th:text="${activeBatches}">0</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box">
@@ -126,7 +126,7 @@
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                             Stock Crítico / Bajo
                                         </div>
-                                        <div class="h4 mb-0 font-weight-bold text-gray-800">5 Ítems</div>
+                                        <div class="h4 mb-0 font-weight-bold text-gray-800" th:text="${lowStock + ' Ítems'}">0 Ítems</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box" style="background: rgba(246, 194, 62, 0.15); color: #f6c23e;">
@@ -146,7 +146,7 @@
                                         <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                             Por Vencer (30 días)
                                         </div>
-                                        <div class="h4 mb-0 font-weight-bold text-gray-800">2 Lotes</div>
+                                        <div class="h4 mb-0 font-weight-bold text-gray-800" th:text="${expiringSoon + ' Lotes'}">0 Lotes</div>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon-box" style="background: rgba(231, 74, 59, 0.15); color: #e74a3b;">
@@ -162,14 +162,14 @@
                 <!-- Filtros de Búsqueda -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <form class="row align-items-end">
+                        <form th:action="@{/admin/medicine-stock}" method="get" class="row align-items-end">
                             <div class="col-md-4 mb-3 mb-md-0">
                                 <label class="form-label text-gray-700 font-weight-bold small">Nombre o Código</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-white"><i class="bi bi-search text-purple"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Ej. Acetaminofén o MED-001...">
+                                    <input type="text" name="query" th:value="${query}" class="form-control" placeholder="Ej. Acetaminofén o MED-001...">
                                 </div>
                             </div>
 
@@ -195,7 +195,7 @@
                             </div>
 
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-purple btn-block font-weight-bold">
+                                <button type="submit" class="btn btn-purple btn-block font-weight-bold">
                                     <i class="bi bi-funnel-fill mr-1"></i> Filtrar
                                 </button>
                             </div>
@@ -209,7 +209,7 @@
                         <h6 class="m-0 font-weight-bold text-purple">
                             <i class="bi bi-list-check mr-2"></i>Existencias en Farmacia
                         </h6>
-                        <span class="badge badge-light text-purple p-2 border font-weight-bold">Registros: 3</span>
+                        <span class="badge badge-light text-purple p-2 border font-weight-bold" th:text="'Registros: ' + ${stock.size()}">Registros: 0</span>
                     </div>
 
                     <div class="card-body p-0">
@@ -227,69 +227,29 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="align-middle font-weight-bold">MED-101</td>
-                                        <td class="align-middle">
-                                            <div class="font-weight-bold text-gray-800">Acetaminofén 500mg</div>
-                                            <div class="small text-gray-500">Caja x 20 tabletas</div>
-                                        </td>
-                                        <td class="align-middle"><span class="badge badge-light text-dark border">Analgésicos</span></td>
-                                        <td class="align-middle font-weight-bold text-gray-800">150 U.</td>
-                                        <td class="align-middle">15/10/2027</td>
-                                        <td class="align-middle">
-                                            <span class="badge badge-success">Disponible</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-sm btn-light border text-purple mr-1" title="Ajustar Stock">
-                                                <i class="bi bi-plus-slash-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-light border text-primary" title="Editar detalles">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                        </td>
+                                    <tr th:if="${stock.isEmpty()}">
+                                        <td colspan="7" class="text-center text-gray-500 py-4">No hay registros de stock</td>
                                     </tr>
-
-                                    <tr>
-                                        <td class="align-middle font-weight-bold">MED-102</td>
+                                    <tr th:each="batch : ${stock}">
+                                        <td class="align-middle font-weight-bold" th:text="${'MED-' + batch.medicine.id}">MED-1</td>
                                         <td class="align-middle">
-                                            <div class="font-weight-bold text-gray-800">Amoxicilina 500mg</div>
-                                            <div class="small text-gray-500">Caja x 12 cápsulas</div>
+                                            <div class="font-weight-bold text-gray-800" th:text="${batch.medicine.name}">Medicamento</div>
+                                            <div class="small text-gray-500" th:text="${batch.medicine.quantityPerUnit}">Presentación</div>
                                         </td>
-                                        <td class="align-middle"><span class="badge badge-light text-dark border">Antibióticos</span></td>
-                                        <td class="align-middle font-weight-bold text-warning">8 U.</td>
-                                        <td class="align-middle">02/12/2026</td>
+                                        <td class="align-middle"><span class="badge badge-light text-dark border">Medicamento</span></td>
+                                        <td class="align-middle font-weight-bold" th:text="${batch.quantity + ' U.'}">0 U.</td>
+                                        <td class="align-middle" th:text="${#temporals.format(batch.expirationDate, 'dd/MM/yyyy')}">Fecha</td>
                                         <td class="align-middle">
-                                            <span class="badge badge-warning text-white">Stock Bajo</span>
+                                            <span th:classappend="${@adminService.stockStatus(batch) == 'Agotado'} ? 'badge badge-danger' : (${@adminService.stockStatus(batch) == 'Stock Bajo'} ? 'badge badge-warning text-white' : 'badge badge-success')"
+                                                  th:text="${@adminService.stockStatus(batch)}">Estado</span>
                                         </td>
                                         <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-sm btn-light border text-purple mr-1" title="Ajustar Stock">
-                                                <i class="bi bi-plus-slash-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-light border text-primary" title="Editar detalles">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="align-middle font-weight-bold">MED-103</td>
-                                        <td class="align-middle">
-                                            <div class="font-weight-bold text-gray-800">Ibuprofeno 800mg</div>
-                                            <div class="small text-gray-500">Caja x 10 tabletas</div>
-                                        </td>
-                                        <td class="align-middle"><span class="badge badge-light text-dark border">Antiinflamatorios</span></td>
-                                        <td class="align-middle font-weight-bold text-danger">0 U.</td>
-                                        <td class="align-middle">20/08/2026</td>
-                                        <td class="align-middle">
-                                            <span class="badge badge-danger">Agotado</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-sm btn-light border text-purple mr-1" title="Ajustar Stock">
-                                                <i class="bi bi-plus-slash-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-light border text-primary" title="Editar detalles">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
+                                            <form th:action="@{/admin/medicine-stock/{id}/adjust(id=${batch.id})}" method="post" class="d-inline-flex">
+                                                <input type="number" name="quantity" min="0" th:value="${batch.quantity}" class="form-control form-control-sm mr-1" style="width:90px">
+                                                <button type="submit" class="btn btn-sm btn-light border text-purple" title="Ajustar Stock">
+                                                    <i class="bi bi-plus-slash-minus"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -322,5 +282,35 @@
         </div>
     </div>
 
+    <div class="modal fade" id="registerMedicineModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold">Registrar medicamento</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                </div>
+                <form th:action="@{/admin/medicine-stock/register}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Presentación</label>
+                            <input type="text" name="quantityPerUnit" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio COP</label>
+                            <input type="number" name="priceCOP" min="0" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-purple">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

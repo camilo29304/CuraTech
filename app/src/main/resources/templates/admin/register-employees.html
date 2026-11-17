@@ -113,7 +113,9 @@
                         </div>
 
                         <div class="card-body p-4">
-                            <form>
+                            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                            <form th:action="@{/admin/register-employees}" th:object="${employee}" method="post">
                                 <!-- Sección 1: Datos Personales -->
                                 <h6 class="text-xs font-weight-bold text-purple text-uppercase mb-3">
                                     Información Personal
@@ -126,30 +128,25 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text bg-white"><i class="bi bi-person text-purple"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="Ej. Juan Carlos">
+                                            <input type="text" class="form-control" th:field="*{name}" placeholder="Ej. Juan Carlos" required>
                                         </div>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Apellidos</label>
-                                        <input type="text" class="form-control" placeholder="Ej. Pérez Gómez">
+                                        <input type="text" class="form-control" th:field="*{lastName}" placeholder="Ej. Pérez Gómez" required>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Tipo de Documento</label>
-                                        <select class="form-control">
-                                            <option selected disabled>Seleccionar...</option>
-                                            <option>Cédula de Ciudadanía</option>
-                                            <option>Cédula de Extranjería</option>
-                                            <option>Pasaporte</option>
-                                        </select>
+                                        <input type="text" class="form-control" value="Cédula de Ciudadanía" disabled>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Número de Documento</label>
-                                        <input type="text" class="form-control" placeholder="1234567890">
+                                        <input type="text" class="form-control" th:field="*{documentNumber}" placeholder="1234567890" required>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
@@ -158,7 +155,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text bg-white"><i class="bi bi-telephone text-purple"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="300 000 0000">
+                                            <input type="text" class="form-control" value="No disponible en el modelo" disabled>
                                         </div>
                                     </div>
 
@@ -168,7 +165,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text bg-white"><i class="bi bi-envelope text-purple"></i></span>
                                             </div>
-                                            <input type="email" class="form-control" placeholder="empleado@CuraTech.com">
+                                            <input type="email" class="form-control" th:field="*{email}" placeholder="empleado@CuraTech.com" required>
                                         </div>
                                     </div>
                                 </div>
@@ -183,35 +180,30 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Cargo / Especialidad</label>
-                                        <input type="text" class="form-control" placeholder="Ej. Médico General, Recepcionista">
+                                        <input type="date" class="form-control" th:field="*{birthDate}" required>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Asignación de Rol</label>
-                                        <select class="form-control">
+                                        <select class="form-control" name="roleName" required>
                                             <option selected disabled>Seleccionar Rol...</option>
-                                            <option>ADMINISTRADOR</option>
-                                            <option>EMPLEADO / MÉDICO</option>
-                                            <option>RECEPCION</option>
+                                            <option th:each="role : ${roles}" th:value="${role.titleName}" th:text="${role.titleName}"></option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Estado Inicial</label>
-                                        <select class="form-control">
-                                            <option>Activo</option>
-                                            <option>Inactivo</option>
-                                        </select>
+                                        <input type="date" class="form-control" th:field="*{hireDate}">
                                     </div>
                                 </div>
 
                                 <!-- Botones de Acción -->
                                 <div class="row mt-4">
                                     <div class="col-12 d-flex justify-content-end gap-2">
-                                        <button type="button" class="btn btn-light border mr-2 font-weight-bold text-gray-700">
+                                        <a th:href="@{/admin}" class="btn btn-light border mr-2 font-weight-bold text-gray-700">
                                             <i class="bi bi-x-circle mr-1"></i> Cancelar
-                                        </button>
-                                        <button type="button" class="btn btn-purple font-weight-bold px-4">
+                                        </a>
+                                        <button type="submit" class="btn btn-purple font-weight-bold px-4">
                                             <i class="bi bi-check-circle-fill mr-1"></i> Registrar Empleado
                                         </button>
                                     </div>

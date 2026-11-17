@@ -11,6 +11,5 @@ public interface BatchStockRepository extends JpaRepository<BatchStock, Integer>
     boolean existsByMedicineAndQuantityGreaterThan(Medicine medicine, int quantity);
 
     BatchStock findByMedicineAndQuantityGreaterThan(Medicine medicine, int quantity);
-    
-
+    BatchStock findById(int id);
 }

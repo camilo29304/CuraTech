@@ -7,4 +7,6 @@ import com.medicore.app.models.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByDocumentNumberAndPassword(String documentNumber, String password);
+    User findByDocumentNumber(String documentNumber);
+    void deleteByDocumentNumber(String documentNumber);
 }

@@ -8,7 +8,5 @@ import com.medicore.app.models.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Integer>{
-    int findByTitleName (String titleName);
-    
-
+    Role findByTitleNameIgnoreCase(String titleName);
 }
