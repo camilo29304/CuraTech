@@ -34,7 +34,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     @Query("SELECT a FROM Appointment a " +
             "JOIN a.employee e " +
-            "WHERE e.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP " +
+            "WHERE e.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP AND a.patient IS NOT NULL " +
             "ORDER BY a.dateTime ASC "+
             "LIMIT 1")
     Appointment findNextApptmByEmployee( @Param("documentNumber") String documentNumber);

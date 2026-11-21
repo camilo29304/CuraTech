@@ -72,7 +72,7 @@
                             <p class="mb-1"><i class="bi bi-clock mr-2 text-purple"></i><strong>Hora:</strong> <span th:text="${appointment.formattedTime}">08:30 AM</span></p>
                             <p class="mb-1"><i class="bi bi-tag mr-2 text-purple"></i><strong>Tipo:</strong> <span th:text="${appointment.apptmType.type}">Medicina General</span></p>
                             <p class="mb-1"><i class="bi bi-calendar-event mr-2 text-purple"></i><strong>Día:</strong> <span th:text="${appointment.formattedDate}">15 Sep 2026</span></p>
-                            <p class="mb-0"><i class="bi bi-person mr-2 text-purple"></i><strong>Paciente:</strong> <span th:text="${appointment.patient.name} + ' ' + ${appointment.patient.lastName}">Juan Pérez</span></p>
+                            <p class="mb-0"><i class="bi bi-person mr-2 text-purple"></i><strong>Paciente:</strong> <span th:text="${appointment.patient.name + ' ' + appointment.patient.lastName}"> Juan Pérez </span></p>
                         </div>
                     </div>
                 </div>
