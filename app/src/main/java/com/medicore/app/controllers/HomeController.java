@@ -47,7 +47,7 @@ public class HomeController {
     public String validateLogin(@RequestParam String documentNumber, @RequestParam String password) {
         String role = loginService.checkLogin(documentNumber, password);
         if (role == null) {
-             System.out.println("Login fallido.");
+            System.out.println("Usuario no encontrado o contraseña incorrecta."); // debería capturar la excepción y mostrar el mensaje de ésta
             return "redirect:/login?error=true"; // Redirige de nuevo al login con un parámetro de error
         } 
         UserSession.setDocumentNumber(documentNumber);

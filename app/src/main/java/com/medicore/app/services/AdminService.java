@@ -1,7 +1,6 @@
 package com.medicore.app.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,12 +64,6 @@ public class AdminService {
     }
 
     @Transactional
-    public Employee saveEmployee(Employee employee) {
-        return registerEmployee(employee,
-            employee.getRole() == null ? null : employee.getRole().getTitleName());
-    }
-
-    @Transactional
     public Employee updateEmployee(int id, Employee employee) {
         return employeeRepo.findById(id).map(existing -> {
             existing.setName(employee.getName());
@@ -110,6 +103,13 @@ public class AdminService {
         }
         User user = userRepo.findByDocumentNumber(employee.getDocumentNumber());
         return user == null ? "Inactivo" : "Activo";
+    }
+
+    
+    @Transactional
+    public Employee saveEmployee(Employee employee) {
+        return registerEmployee(employee,
+            employee.getRole() == null ? null : employee.getRole().getTitleName());
     }
 
     @Transactional

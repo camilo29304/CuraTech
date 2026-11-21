@@ -81,6 +81,14 @@ public class AppointmentService {
             throw new IllegalArgumentException("Las citas no pueden ser nulas");
         }
 
+        if (toCancel.getPatient() == null) {
+            throw new IllegalArgumentException("Las cita a cancelar debe tener un paciente asociado");
+        }
+
+        if (toSchedule.getPatient() != null) {
+            throw new IllegalArgumentException("Las cita a ocupar no debe tener un paciente asociado");
+        }
+
         if (toCancel.isAvailable()) {
             throw new IllegalStateException("La cita a reprogramar no está ocupada");
         }
@@ -98,10 +106,17 @@ public class AppointmentService {
     }
 
     public boolean cancelAppointment(int idApptm){
-        Appointment toCancel = repo.findById(idApptm).orElse(null);
-        if (toCancel == null) {
-            throw new IllegalStateException("La cita no fue encontrada");   
-        }
+        Appointment toCancel = repo.findById(idApptm)
+        .orElseThrow(() -> new IllegalStateException("La cita no fue encontrada"));
+
+        if (toCancel.isAvailable()) {
+            throw new IllegalStateException("La cita no se puede cancelar porque ya está disponible");
+         }
+
+        if (toCancel.getPatient() == null) {
+            throw new IllegalStateException("La cita debe tener un paciente asociado");
+         }
+
         toCancel.setAvailable(true);
         toCancel.setPatient(null);
         repo.save(toCancel);
