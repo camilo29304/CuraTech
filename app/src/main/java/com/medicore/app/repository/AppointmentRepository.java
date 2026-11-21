@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.medicore.app.models.Appointment;
 
@@ -34,7 +35,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     @Query("SELECT a FROM Appointment a " +
             "JOIN a.employee e " +
-            "WHERE e.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP " +
+            "WHERE e.documentNumber = :documentNumber AND  a.dateTime > CURRENT_TIMESTAMP AND a.patient IS NOT NULL " +
             "ORDER BY a.dateTime ASC "+
             "LIMIT 1")
     Appointment findNextApptmByEmployee( @Param("documentNumber") String documentNumber);
@@ -49,5 +50,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     Appointment findByEmployeeIdAndDateTime(int employeeId, OffsetDateTime dateTime);
     List<Appointment> findByPatientDocumentNumberAndIsAvailable(String documentNumber, boolean isAvailable);
     boolean existsByDateTimeGreaterThanEqualAndDateTimeLessThan(OffsetDateTime weekStart, OffsetDateTime nextWeekStart);
+    @Transactional
+    long deleteByDateTimeBeforeAndPatientIsNull(OffsetDateTime cutoff);
     
 }

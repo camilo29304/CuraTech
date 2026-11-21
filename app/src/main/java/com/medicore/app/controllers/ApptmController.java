@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.medicore.app.config.ScheduleTaskService;
 import com.medicore.app.models.ApptmType;
 import com.medicore.app.services.AppointmentService;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 

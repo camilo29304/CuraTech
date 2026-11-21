@@ -158,6 +158,11 @@
                                             <input type="text" class="form-control" value="No disponible en el modelo" disabled>
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label text-gray-700 font-weight-bold small">fecha de nacimiento</label>
+                                        <input type="date" class="form-control" th:field="*{birthDate}" th:attr="max=${maxBirthDate}" required>
+                                    </div>
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Correo Electrónico</label>
@@ -177,11 +182,7 @@
                                     Información del Cargo y Rol
                                 </h6>
 
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label text-gray-700 font-weight-bold small">Cargo / Especialidad</label>
-                                        <input type="date" class="form-control" th:field="*{birthDate}" required>
-                                    </div>
+                                <div class="row">        
 
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-gray-700 font-weight-bold small">Asignación de Rol</label>
@@ -192,7 +193,7 @@
                                     </div>
 
                                     <div class="col-md-4 mb-3">
-                                        <label class="form-label text-gray-700 font-weight-bold small">Estado Inicial</label>
+                                        <label class="form-label text-gray-700 font-weight-bold small">Fecha de Contratación</label>
                                         <input type="date" class="form-control" th:field="*{hireDate}">
                                     </div>
                                 </div>
