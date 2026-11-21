@@ -46,28 +46,34 @@ public class PatientController {
 
 
     @GetMapping
-    public String showPatientMenu() {
-        return "patient/patientMenu"; // Busca home.html en templates/
+    public String showPatientMenu(Model model) {
+        Patient patient = patientService.getPatientByDocumentNumber(UserSession.getDocumentNumber());
+        Appointment apptm = appointmentService.getNextAppointment(patient, "PACIENTE");
+        List<Prescription> prescriptions = prescriptionService.getActivePrescriptionsByPatient(UserSession.getDocumentNumber());
+        model.addAttribute("patient", patient);
+        model.addAttribute("appointment", apptm);
+        model.addAttribute("prescriptions", prescriptions);
+        return "patient/patient-menu";
     }
-    @GetMapping("/updatePersonalDataView")
+    @GetMapping("/update-personal-data-view")
     public String showUpdatePersonalDataView(Model model) {
         System.err.println("Document Number: " + UserSession.getDocumentNumber());
         Patient patient = patientService.getPatientByDocumentNumber(UserSession.getDocumentNumber());
         model.addAttribute("patient", patient);
-        return "patient/updatePersonalData"; // Busca updatePersonalData.html en templates/
+        return "patient/update-personal-data"; // Busca updatePersonalData.html en templates/
     }
-    @PostMapping("/updatePersonalData")
+    @PostMapping("/update-personal-data")
     public String updatePersonalData(@Valid @ModelAttribute Patient patient, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()){
-            return "patient/updatePersonalData"; // Si hay errores de validación, vuelve a la vista de actualización
+            return "patient/update-personal-data"; // Si hay errores de validación, vuelve a la vista de actualización
             
         }
         if(patientService.updatePatient(patient)){
-            return "redirect:/patient/updatePersonalDataView";
+            return "redirect:/patient/update-personal-data-view";
         }
          throw new RuntimeException("Error al actualizar los datos del paciente");
     }
-    @GetMapping("/activePrescriptions")
+    @GetMapping("/active-prescriptions")
     public String showActivePrescriptionsView(Model model) {
         List<Prescription> activePrescriptions = prescriptionService.getActivePrescriptionsByPatient(UserSession.getDocumentNumber());
         System.out.println("Número de documento: " + UserSession.getDocumentNumber());
@@ -75,7 +81,7 @@ public class PatientController {
             System.out.println("Prescription ID: " + prescription.getId());
         }
         model.addAttribute("activePrescriptions", activePrescriptions);
-        return "patient/activePrescriptions"; // Busca activePrescriptions.html en templates/
+        return "patient/active-prescriptions"; // Busca activePrescriptions.html en templates/
     }
     
     @GetMapping("/pqrs")
@@ -134,6 +140,6 @@ public class PatientController {
         System.out.println("date: " + date);
         List<Appointment> availableTimes = appointmentService.getAvailableTimes(apptmTypeId, doctorId, date);
         model.addAttribute("availableTimes", availableTimes);
-        return "patient/appointments/timesAvailable :: timesContainer";
+        return "patient/appointments/times-available :: timesContainer";
     }
 }

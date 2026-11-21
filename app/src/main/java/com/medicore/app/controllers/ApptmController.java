@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.medicore.app.config.ScheduleTaskService;
 import com.medicore.app.models.ApptmType;
 import com.medicore.app.services.AppointmentService;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -19,6 +22,8 @@ import com.medicore.app.services.AppointmentService;
 public class ApptmController {
     @Autowired
     private AppointmentService appointmentService;
+    @Autowired 
+    private ScheduleTaskService taskService;
     
     @GetMapping("/types")
     public List<ApptmType> getAppointmentsTypes() {
@@ -26,10 +31,16 @@ public class ApptmController {
         return apptmTypes;
     }
 
+    @PostMapping("/create-spaces")
+    public String createSpaces() {
+        taskService.generateCurrentWeekAppointments();
+        return "public/login";
+    }
+    
+
     @PostMapping("/schedule-apptm")
     public String scheduleApptm(@RequestParam String apptmTypeId, @RequestParam String doctorId, @RequestParam String date, @RequestParam String time, Model model) {
-        appointmentService.scheduleAppointment(apptmTypeId, doctorId, date, time);
-            
+        appointmentService.scheduleAppointment(apptmTypeId, doctorId, date, time);    
         return "redirect:/patient/appointments/schedule";
     }
     

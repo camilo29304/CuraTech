@@ -2,6 +2,7 @@ package com.medicore.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,11 +18,22 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "public/rolSelection"; // Busca home.html en templates/
+        return "public/rol-selection"; // Busca home.html en templates/
     }
 
     @GetMapping("/login")
-    public String showLoginView() {
+    public String showLoginView(Model model) {
+        String document = "";
+        String password = "";
+        try {
+            document = loginService.getEntryDocument();  
+            password = loginService.getEntryPassword();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        model.addAttribute("document", document);
+        model.addAttribute("password", password);
+        model.addAttribute("role", UserSession.getRole());
         return "public/login"; // Busca home.html en templates/
     }
 
@@ -36,7 +48,7 @@ public class HomeController {
     public String validateLogin(@RequestParam String documentNumber, @RequestParam String password) {
         String role = loginService.checkLogin(documentNumber, password);
         if (role == null) {
-             System.out.println("Login fallido.");
+            System.out.println("Usuario no encontrado o contraseña incorrecta."); // debería capturar la excepción y mostrar el mensaje de ésta
             return "redirect:/login?error=true"; // Redirige de nuevo al login con un parámetro de error
         } 
         UserSession.setDocumentNumber(documentNumber);

@@ -25,18 +25,18 @@ public class PrescriptionController {
     @PostMapping("/save")
     public String savePrescription(@ModelAttribute Prescription prescription, BindingResult bindingResult ,Model model ) {
         if(bindingResult.hasErrors()){
-            return "employee/createPrescription";
+            return "employee/create-prescription";
         }
         
         if (!medicineService.isAvailable(prescription)) {
              bindingResult.rejectValue("batchStock", "error.Stock", "Sin stock disponible para este medicamento");
-             return "employee/createPrescription";
+             return "employee/create-prescription";
         }
 
         medicineService.setBatchStock(prescription);
         prescription.setActive(true);
         prescriptionService.savePrescription(prescription);
-        return "redirect:/employee/createPrescriptionView";
+        return "redirect:/employee/create-prescription-view";
                
     }
 }

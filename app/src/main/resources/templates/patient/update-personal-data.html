@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+
+    <title>CuraTech - Actualizar Datos Personales</title>
+
+    <!-- FontAwesome y Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Bootstrap CSS y Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4e73df 0%, #6f42c1 100%);
+            --accent-purple: #6f42c1;
+        }
+
+        .text-purple {
+            color: var(--accent-purple) !important;
+        }
+
+        .btn-purple {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-purple:hover {
+            opacity: 0.9;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+        }
+
+        .card-custom {
+            border: none;
+            border-top: 4px solid var(--accent-purple);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            border-bottom: 2px solid #eaecf4;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Simulación del Sidebar */
+        .sidebar-mock {
+            width: 224px;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+
+        <!-- Visual Mockup Sidebar -->
+        <aside th:replace="fragments/patient-sidebar :: patientSidebar"></aside>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content" class="p-4 bg-light">
+                
+                <!-- Encabezado -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
+                        <i class="bi bi-person-gear text-purple mr-2"></i> Actualizar Mis Datos
+                    </h1>
+                </div>
+
+                <!-- Formulario Visual -->
+                <div class="card shadow card-custom mb-4" style="max-width: 900px;">
+                    <div class="card-header bg-white py-3">
+                        <h6 class="m-0 font-weight-bold text-purple">
+                            <i class="bi bi-person-lines-fill mr-2"></i> Información del Paciente
+                        </h6>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form th:action="@{/patient/updatePersonalData}" method="post" th:object="${patient}">
+                            
+                            <!-- Sección 1: Documento e Identidad -->
+                            <div class="section-title">
+                                <i class="bi bi-card-heading mr-2"></i>1. Datos de Identificación
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small text-gray-700">Número de Documento</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-light"><i class="bi bi-shield-lock text-muted"></i></span>
+                                        </div>
+                                        <input type="hidden" name="id" th:value="${patient.getId()}">
+                                        <input type="text" class="form-control bg-light" name = "documentNumber" th:value="${patient.getDocumentNumber()}" readonly>
+                                        <span th:if="${#fields.hasErrors('documentNumber')}" 
+                                        th:errors="*{documentNumber}" 
+                                        class="text-danger">Error en documento</span>
+                                    </div>
+                                    <small class="form-text text-muted">Campo no modificable.</small><
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small text-gray-700">Fecha de Nacimiento</label>
+                                    <input type="date" class="form-control" name = "birthDate" th:value="${patient.getBirthDate()}">
+                                    <span th:if="${#fields.hasErrors('birthDate')}" 
+                                        th:errors="*{birthDate}" 
+                                        class="text-danger">Error en fecha de nacimiento</span>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small text-gray-700">Nombres</label>
+                                    <input type="text" class="form-control" name="name" th:value="${patient.getName()}">
+                                     <span th:if="${#fields.hasErrors('name')}" 
+                                        th:errors="*{name}" 
+                                        class="text-danger">Error en nombre</span>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="font-weight-bold small text-gray-700">Apellidos</label>
+                                    <input type="text" class="form-control" name="lastName" th:value="${patient.getLastName()}">
+                                    <span th:if="${#fields.hasErrors('lastName')}" 
+                                        th:errors="*{lastName}" 
+                                        class="text-danger">Error en apellido</span>
+                                </div>
+                            </div>
+
+                            <!-- Sección 2: Contacto y Datos Médicos -->
+                            <div class="section-title mt-4">
+                                <i class="bi bi-heart-pulse mr-2"></i>2. Contacto e Información Médica
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-8">
+                                    <label class="font-weight-bold small text-gray-700">Correo Electrónico</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white"><i class="bi bi-envelope text-purple"></i></span>
+                                        </div>
+                                        <input type="email" class="form-control" name="email" th:value="${patient.getEmail()}">
+                                        <span th:if="${#fields.hasErrors('email')}" 
+                                        th:errors="*{email}" 
+                                        class="text-danger">Error en email</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label class="font-weight-bold small text-gray-700">Tipo de Sangre</label>
+                                    <select class="form-control" name="bloodType">
+                                        <option value="O-" th:selected="${patient.getBloodType() == 'O-'}">O-</option>
+                                        <option value="A+" th:selected="${patient.getBloodType() == 'A+'}">A+</option>
+                                        <option value="A-" th:selected="${patient.getBloodType() == 'A-'}">A-</option>
+                                        <option value="B+" th:selected="${patient.getBloodType() == 'B+'}">B+</option>
+                                        <option value="B-" th:selected="${patient.getBloodType() == 'B-'}">B-</option>
+                                        <option value="AB+" th:selected="${patient.getBloodType() == 'AB+'}">AB+</option>
+                                        <option value="AB-" th:selected="${patient.getBloodType() == 'AB-'}">AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="font-weight-bold small text-gray-700">Alergias Conocidas</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-white"><i class="bi bi-exclamation-triangle text-purple"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="allergies" th:value="${patient.getAllergies()}">
+                                    <span th:if="${#fields.hasErrors('allergies')}" 
+                                        th:errors="*{allergies}" 
+                                        class="text-danger">Error en alergias</span>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-light border font-weight-bold mr-2">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-purple font-weight-bold px-4">
+                                    <i class="bi bi-arrow-repeat mr-1"></i> Actualizar Información
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white shadow-sm mt-auto">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto text-gray-600">
+                        <span>CuraTech System &copy; 2026</span>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+</body>
+</html>

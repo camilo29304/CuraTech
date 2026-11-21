@@ -1,0 +1,82 @@
+
+        <!-- Sidebar (Fragmento Thymeleaf) -->
+        <aside th:fragment="patientSidebar" class="patientSidebar">
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/patient}">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="fas fa-laugh-wink"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">CuraTech</div>
+                </a>
+
+                <hr class="sidebar-divider my-0">
+
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/patient}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Patient</span>
+                    </a>
+                </li>
+
+                <hr class="sidebar-divider">
+
+                <div class="sidebar-heading">
+                    Interface
+                </div>
+
+                <!-- Nav Item - Citas Médicas Collapse -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-toggle="collapse" data-target="#appointmentsMenu"
+                        aria-expanded="false" aria-controls="appointmentsMenu" href="#">
+                        <i class="bi bi-briefcase"></i>
+                        <span>Citas Medicas</span>
+                    </a>
+                    <div id="appointmentsMenu" class="collapse" aria-labelledby="headingAppointments" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Opciones de citas:</h6>
+                            <a class="collapse-item" th:href="@{/patient/appointments/schedule}">Agendar cita</a>
+                            <a class="collapse-item" th:href="@{/patient/appointments/cancel}">Cancelar cita</a>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Nav Item - Actualizar Datos -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/patient/update-personal-data-view}">
+                        <i class="bi bi-search"></i>
+                        <span>Actualizar datos</span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Prescripciones Activas -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/patient/active-prescriptions}">
+                        <i class="bi bi-backpack2-fill"></i>
+                        <span>Prescripciones activas</span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - PQRS -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/patient/pqrs}">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>PQRS</span>
+                    </a>
+                </li>
+
+                <!-- Nav Item - Nuestras Sedes -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/patient/branches}">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>Nuestras sedes</span>
+                    </a>
+                </li>
+
+                <hr class="sidebar-divider d-none d-md-block">
+
+
+            </ul>
+        </aside>

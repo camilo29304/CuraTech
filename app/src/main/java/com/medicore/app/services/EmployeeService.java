@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 
 import com.medicore.app.models.Employee;
 import com.medicore.app.models.Role;
+import com.medicore.app.models.Schedule;
 import com.medicore.app.repository.EmployeeRepository;
 import com.medicore.app.repository.RoleRepository;
+import com.medicore.app.repository.ScheduleRepository;
 
 @Service
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+    @Autowired
     private RoleRepository roleRepository;
 
     public List<Role> getRoles() {
@@ -23,6 +28,10 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
+    public List<Schedule> getSchedulesByEmployeeDocumentNumber(String documentNumber) {
+        return scheduleRepository.findByEmployeeDocumentNumber(documentNumber);
+    }
+
     public boolean deleteEmployeeByDocumentNumber(String documentNumber) {
         int deletedCount = employeeRepository.deleteByDocumentNumber(documentNumber);
         return deletedCount > 0;
@@ -30,8 +39,7 @@ public class EmployeeService {
 
     public boolean saveEmployee(Employee employee){
         if (employeeRepository.findByDocumentNumber(employee.getDocumentNumber()) != null) {
-            //implement exception
-            return false; // Employee with the same document number already exists
+            throw new IllegalArgumentException("El empleado ya existe");
         }
         employeeRepository.save(employee);
         return true;
@@ -45,37 +53,4 @@ public class EmployeeService {
         return employeeRepository.findByLastName(lastName);
     }
 
-    public boolean checkDataFormat(Employee employee) {
-        // documentNumber must contain only numbers
-        if (!employee.getDocumentNumber().matches("\\d+")) {
-            System.err.println("Error: El ID/Documento del empleado debe contener solo números.");
-            return false;
-        }
-
-        String regexTexto = "[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+";
-        if (!employee.getName().matches(regexTexto)) {
-            System.err.println("Error: El nombre del empleado contiene caracteres inválidos.");
-            return false;
-        }
-        if (!employee.getLastName().matches(regexTexto)) {
-            System.err.println("Error: El apellido del empleado contiene caracteres inválidos.");
-            return false;
-        }
-
-        // 3. Email: standard email format
-        if (employee.getEmail() != null && !employee.getEmail().trim().isEmpty()) {
-            if (!employee.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-                System.err.println("Error: El formato del correo electrónico del employee es incorrecto.");
-                return false;
-            }
-        }
-
-        if (employee.getBirthDate() != null) {
-            if (employee.getBirthDate().isAfter(java.time.LocalDate.now().minusYears(18))) {
-                System.err.println("Error: El employee debe ser mayor de edad.");
-                return false;
-            }
-        }
-        return true;
-    }
 }

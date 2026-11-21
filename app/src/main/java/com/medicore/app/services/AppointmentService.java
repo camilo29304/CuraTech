@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,13 @@ import org.springframework.stereotype.Service;
 import com.medicore.app.models.Appointment;
 import com.medicore.app.models.ApptmType;
 import com.medicore.app.models.Patient;
+import com.medicore.app.models.Person;
 import com.medicore.app.repository.AppointmentRepository;
 import com.medicore.app.repository.ApptmTypeRepository;
 import com.medicore.app.repository.PatientRepository;
 import com.medicore.app.utils.UserSession;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -31,27 +32,31 @@ public class AppointmentService {
     private PatientRepository patientRepo;
 
     @Transactional
-    public boolean scheduleAppointment(Appointment toSchedule, Patient patient) {
-         if (toSchedule.isAvailable() == false) {
-            //implement exception
+    public boolean scheduleAppointment(int idApptm, Patient patient) {
+        Appointment apptm = repo.findById(idApptm).orElseThrow(() -> new EntityNotFoundException("Cita no encontrada con id: " + idApptm)); 
+        
+        if (apptm.isAvailable() == false) {
             System.out.println("la cita no está disponible");
             return false;
          }
 
-         toSchedule.setAvailable(false);
-         toSchedule.setPatient(patient);
+         apptm.setAvailable(false);
+         apptm.setPatient(patient);
 
          return true;
     }
+    
     public boolean scheduleAppointment(String apptmTypeId, String doctorId, String date, String time){
         LocalDate capturedDate = LocalDate.parse(date);
         LocalTime capturedTime = LocalTime.parse(time);
+
+        //ajustar las horas debido al uso de TimeStamp with TZ
         capturedTime = capturedTime.minusHours(5);
         OffsetDateTime dateTime = formatDateTime(capturedDate, capturedTime);
-        System.out.println("date time en el service: " + dateTime);
+
         Appointment toSchedule = repo.findByEmployeeIdAndDateTime(Integer.parseInt(doctorId), dateTime);
-        Optional<Patient> patient = patientRepo.findByDocumentNumber(UserSession.getDocumentNumber());
-        toSchedule.setPatient(patient.get());
+        Patient patient = patientRepo.findByDocumentNumber(UserSession.getDocumentNumber()).orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con id: " + UserSession.getDocumentNumber()));
+        toSchedule.setPatient(patient);
         toSchedule.setAvailable(false);
         repo.save(toSchedule);
         return true;
@@ -72,15 +77,23 @@ public class AppointmentService {
 
     @Transactional
     public boolean rescheduleAppointment(Appointment toCancel, Appointment toSchedule){
-        if (toCancel.isAvailable() == true) {
-            //implement exception
-            System.out.println("la cita a reprogramar no está ocupada");
-            return false;
+        if (toCancel == null || toSchedule == null) {
+            throw new IllegalArgumentException("Las citas no pueden ser nulas");
         }
-        if (toSchedule.isAvailable() == false) {
-            //implement exception
-            System.out.println("la cita que desea no está disponible");
-            return false;
+
+        if (toCancel.getPatient() == null) {
+            throw new IllegalArgumentException("Las cita a cancelar debe tener un paciente asociado");
+        }
+
+        if (toSchedule.getPatient() != null) {
+            throw new IllegalArgumentException("Las cita a ocupar no debe tener un paciente asociado");
+        }
+
+        if (toCancel.isAvailable()) {
+            throw new IllegalStateException("La cita a reprogramar no está ocupada");
+        }
+        if (!toSchedule.isAvailable()) {
+            throw new IllegalStateException("La cita que desea no está disponible");
         }
 
         toCancel.setAvailable(true);
@@ -92,16 +105,32 @@ public class AppointmentService {
         return true;
     }
 
-    public boolean cancelAppointment(int id){
-        Appointment toCancel = repo.findById(id).orElse(null);
-        if (toCancel == null) {
-            System.out.println("Cita no encontrada");
-            return false;
-        }
+    public boolean cancelAppointment(int idApptm){
+        Appointment toCancel = repo.findById(idApptm)
+        .orElseThrow(() -> new IllegalStateException("La cita no fue encontrada"));
+
+        if (toCancel.isAvailable()) {
+            throw new IllegalStateException("La cita no se puede cancelar porque ya está disponible");
+         }
+
+        if (toCancel.getPatient() == null) {
+            throw new IllegalStateException("La cita debe tener un paciente asociado");
+         }
+
         toCancel.setAvailable(true);
         toCancel.setPatient(null);
         repo.save(toCancel);
         return true;
+    }
+
+    public Appointment getNextAppointment(Person person, String userType){
+        if (userType.equals("MEDICO")) {
+            return repo.findNextApptmByEmployee(person.getDocumentNumber());
+        }
+        else if(userType.equals("PACIENTE")){
+            return repo.findNextApptmByPatient(person.getDocumentNumber());
+        }
+        else{throw new IllegalArgumentException("Rol de usuario inválido");}
     }
 
     public List<Appointment> getAvailableAppointments() {

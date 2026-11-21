@@ -2,6 +2,7 @@ package com.medicore.app.models;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.function.BooleanSupplier;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,5 +61,10 @@ public class Appointment {
         return dateTime.format(formatter);
     }
 
-    
+    public String getFormattedDate() {
+        if (dateTime == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dateTime.format(formatter);
+    }
+
 }

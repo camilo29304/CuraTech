@@ -1,0 +1,15 @@
+<div id="timesContainer" th:fragment="timesContainer">
+    <div class="btn-group-toggle d-flex flex-wrap gap-2" data-toggle="buttons">
+         <label class="btn btn-outline-primary m-1" th:each="apptm : ${availableTimes}">
+            <input
+                type="radio"
+                th:id="${'time' + apptm.formattedTime}"
+                name="time"
+                th:value="${apptm.formattedTime}"
+                required>
+
+            <span th:text="${apptm.formattedTime}"></span>
+        </label>                                                
+    </div>
+</div>
+    
