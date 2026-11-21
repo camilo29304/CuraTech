@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.medicore.app.models.Appointment;
@@ -51,12 +50,6 @@ public class ScheduleTaskService {
         this.appointmentService = appointmentService;
     }
 
-    //@Scheduled(cron = "0 59 23 * * SUN", zone = "America/Bogota")
-    @Transactional
-    public void generateWeeklyAppointments() {
-        generateWeekIfMissing(LocalDate.now(BOGOTA_ZONE).plusWeeks(1));
-    }
-
     @Transactional
     public void generateCurrentWeekAppointments() {
         generateWeekIfMissing(LocalDate.now(BOGOTA_ZONE));
@@ -75,7 +68,12 @@ public class ScheduleTaskService {
         if (!scheduleRepo.existsByDateBetween(monday, sunday)) {
             createSchedule(monday);
         }
+        deletePastUnscheduleApptms(nextWeekStart);
         createAppointments(monday, sunday);
+    }
+
+    private void deletePastUnscheduleApptms(OffsetDateTime cutoff){
+        appointmentRepo.deleteByDateTimeBeforeAndPatientIsNull(cutoff);
     }
 
     private void createSchedule(LocalDate monday) {
