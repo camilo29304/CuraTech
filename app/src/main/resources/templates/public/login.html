@@ -163,18 +163,11 @@
         <span class="role-badge" th:text="${password}"></span>
         <input type="password" id="password" name="password" placeholder="••••••••" required>
       </div>
-
-      <div class="form-actions">
-        <label class="remember-me">
-          <input type="checkbox"> Recordarme
-        </label>
-        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-      </div>
       
       <button type="submit" class="btn-submit">Ingresar</button>
     </form>
 
-    <a href="index.html" class="back-link">← Cambiar de rol</a>
+    <a th:href="@{/}" class="back-link">← Cambiar de rol</a>
   </main>
 
 </body>

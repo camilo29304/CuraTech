@@ -33,6 +33,7 @@ public class HomeController {
         }
         model.addAttribute("document", document);
         model.addAttribute("password", password);
+        model.addAttribute("role", UserSession.getRole());
         return "public/login"; // Busca home.html en templates/
     }
 
