@@ -1,5 +1,6 @@
 package com.medicore.app.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class AdminController {
     public String showRegisterEmployeesView(Model model) {
         model.addAttribute("employee", new Employee());
         model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("maxBirthDate", LocalDate.now().minusYears(18).toString());
         return "admin/register-employees"; // Busca registerEmployees.html en templates/
     }
 

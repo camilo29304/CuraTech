@@ -114,6 +114,10 @@ public class AdminService {
 
     @Transactional
     public Employee registerEmployee(Employee employee, String roleName) {
+        if (employee.getBirthDate() == null || employee.getBirthDate().isAfter(LocalDate.now().minusYears(18))) {
+            throw new IllegalArgumentException("El empleado debe tener al menos 18 años");
+        }
+
         if (employee.getDocumentNumber() == null
             || employeeRepo.findByDocumentNumber(employee.getDocumentNumber()) != null
             || userRepo.findByDocumentNumber(employee.getDocumentNumber()) != null) {
